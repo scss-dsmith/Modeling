@@ -1,0 +1,94 @@
+@startuml
+' PLantUML parameters:
+skinparam roundcorner 10
+skinparam handwritten true
+!define DARKBLUE
+!include ../style.puml
+
+'
+' Entities:
+'
+class User {
+	string employeeId
+	EmployeeName name
+	EmailAddress email 
+    string departments
+}
+note left: Existing SCView "user" table
+
+class PositionDetail {
+    DateRange dateRange
+	boolean creditWeek
+} 
+
+class Job { 
+    DateRange dateRange
+    decimal PayRate
+}
+note top: UI5 calls this 'Employee Entry Selection'
+
+class PayrollAccount {
+       AccountCode accountCode
+       decimal prorationValue
+}
+
+' Relationships:
+
+User *--{ Job
+Job }--* Department
+Job }--* Location
+Job *--{ PayrollAccount
+Job }--* PositionCode
+
+PositionDetail }--* JobClassification
+PositionDetail }--* PayCode
+PositionCode *--{ PositionDetail
+
+PayrollAccount }--* AccountCode
+PayrollAccount }--* AccountExtension
+
+class EmployeeName {
+    string firstName
+    string lastName	   
+} 
+
+class EmailAddress {
+    string address
+} 
+
+class DateRange {
+    DateTime start
+    DateTime end
+    bool contains(DateTime)
+}
+
+abstract class Code { 
+  string code 
+  string description 
+}
+
+class Department 
+note bottom: Existing SCView table
+
+class Parameters {
+    decimal CreditWeeksPayLimit
+}
+note bottom: Contains value needed during export.\nStored as Setting in SCView.
+
+class Location <<extends Code>>
+class JobClassification <<extends Code>>
+class PayCode <<extends Code>>
+class PositionCode <<extends Code>>
+class AccountCode <<extends Code>>
+class AccountExtension <<extends Code>>
+
+title HRIS Timesheet+ Logical Model
+legend left
+
+Cardinality:
+Diamond = 0 or 1
+Crows Feet = To-Many
+
+end legend
+
+@enduml
